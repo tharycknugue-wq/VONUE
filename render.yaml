@@ -5,26 +5,19 @@
 # e injeta as variáveis. No fim, a URL do web service é o link.
 #
 # Notas:
-# - Build roda em Linux → o bug de web build do Windows (node:sea) não
-#   acontece aqui.
-# - `npm install --include=dev` é obrigatório: o build precisa de
-#   typescript/prisma/ts-node (devDependencies) mesmo com NODE_ENV=production.
+# - Usa o Dockerfile da raiz (runtime: docker). O build roda em Linux →
+#   o bug de web build do Windows (node:sea) não acontece aqui.
+# - O Dockerfile builda web+API e, no start, roda `prisma db push` +
+#   seed (idempotente) com a DATABASE_URL já injetada pelo Blueprint.
 # - Demo usa `prisma db push` (sem histórico de migrations). Em produção
 #   real, gere migrations e troque por `prisma migrate deploy`.
 
 services:
   - type: web
     name: vonue
-    runtime: node
+    runtime: docker
     plan: free
-    buildCommand: >
-      npm install --include=dev &&
-      npm run web:build &&
-      npm run build --workspace apps/api &&
-      npx prisma generate --schema apps/api/prisma/schema.prisma &&
-      npx prisma db push --schema apps/api/prisma/schema.prisma --skip-generate &&
-      npm run seed --workspace apps/api
-    startCommand: node apps/api/dist/app.js
+    dockerfilePath: ./Dockerfile
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV

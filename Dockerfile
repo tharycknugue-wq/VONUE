@@ -34,6 +34,8 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
   CMD node -e "fetch('http://localhost:'+(process.env.PORT||3000)+'/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
-# No start: aplica o schema no banco (demo: db push) e sobe a API que
-# também serve o app web. Em produção real, troque por migrate deploy.
-CMD ["sh", "-c", "npx prisma db push --schema apps/api/prisma/schema.prisma --skip-generate && node apps/api/dist/app.js"]
+# No start: aplica o schema no banco (demo: db push), roda o seed
+# (idempotente — selos/usuário origem/evento de exemplo) e sobe a API
+# que também serve o app web. O seed é tolerante a falha pra nunca
+# travar o boot num restart. Em produção real, troque por migrate deploy.
+CMD ["sh", "-c", "npx prisma db push --schema apps/api/prisma/schema.prisma --skip-generate && (npm run seed --workspace apps/api || echo 'seed: ignorado') && node apps/api/dist/app.js"]
