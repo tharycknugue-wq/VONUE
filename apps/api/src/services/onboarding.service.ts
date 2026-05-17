@@ -1,11 +1,12 @@
+import { NucleoType } from '@prisma/client';
 import { prisma } from '../lib/prisma';
 import { AppError } from '../middlewares/error';
 import {
   ONBOARDING_QUESTIONS,
-  resolveAnswerScores,
   publicQuestions,
 } from '../data/onboardingQuestions';
-import { calculateNucleo, type Scores } from '../utils/nucleo';
+import { scoresFromGenres } from '../data/genres';
+import { calculateNucleo } from '../utils/nucleo';
 import type { CompleteOnboardingInput } from '../schemas/onboarding.schema';
 
 export function getQuestions() {
@@ -16,35 +17,28 @@ export async function completeOnboarding(
   userId: string,
   input: CompleteOnboardingInput
 ) {
-  const seen = new Set<string>();
-  const partials: Array<Partial<Scores>> = [];
-
-  for (const answer of input.answers) {
-    if (seen.has(answer.questionId)) {
-      throw new AppError(422, `Pergunta ${answer.questionId} respondida em duplicidade`);
-    }
-    seen.add(answer.questionId);
-
-    const scores = resolveAnswerScores(answer.questionId, answer.optionId);
-    if (!scores) {
-      throw new AppError(422, `Resposta inválida para ${answer.questionId}`);
-    }
-    partials.push(scores);
+  const { partials, forceFarofeiro, validCount } = scoresFromGenres(
+    input.genres
+  );
+  if (validCount === 0) {
+    throw new AppError(422, 'Selecione ao menos um estilo válido');
   }
 
-  for (const question of ONBOARDING_QUESTIONS) {
-    if (!seen.has(question.id)) {
-      throw new AppError(422, `Pergunta ${question.id} não foi respondida`);
-    }
-  }
-
-  const { scores, nucleoType } = calculateNucleo(partials);
+  const calc = calculateNucleo(partials);
+  const scores = calc.scores;
+  // "Curte tudo sem rótulo" vence quando escolhe farofeiro ou 5+ estilos.
+  const nucleoType = forceFarofeiro ? NucleoType.FAROFEIRO : calc.nucleoType;
 
   const [result] = await prisma.$transaction([
     prisma.onboardingResult.upsert({
       where: { userId },
-      create: { userId, answers: input.answers, scores, nucleoType },
-      update: { answers: input.answers, scores, nucleoType, completedAt: new Date() },
+      create: { userId, answers: { genres: input.genres }, scores, nucleoType },
+      update: {
+        answers: { genres: input.genres },
+        scores,
+        nucleoType,
+        completedAt: new Date(),
+      },
     }),
     prisma.user.update({
       where: { id: userId },

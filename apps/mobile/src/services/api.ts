@@ -541,10 +541,10 @@ export const api = {
       '/onboarding/questions'
     ),
 
-  completeOnboarding: (answers: { questionId: string; optionId: string }[]) =>
+  completeOnboarding: (genres: string[]) =>
     request<{ nucleoType: NucleoType; scores: Record<string, number> }>(
       '/onboarding/complete',
-      { method: 'POST', body: { answers }, auth: true }
+      { method: 'POST', body: { genres }, auth: true }
     ),
 
   me: () => request<AuthUser & { onboarding: unknown }>('/users/me', { auth: true }),
