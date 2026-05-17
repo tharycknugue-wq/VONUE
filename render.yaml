@@ -1,0 +1,65 @@
+# Render Blueprint — link público permanente do Vonue.
+#
+# Uso: suba o repo no GitHub → render.com → New → Blueprint → escolha o
+# repo. O Render cria a API (que serve o app web), o Postgres e o Redis
+# e injeta as variáveis. No fim, a URL do web service é o link.
+#
+# Notas:
+# - Build roda em Linux → o bug de web build do Windows (node:sea) não
+#   acontece aqui.
+# - `npm install --include=dev` é obrigatório: o build precisa de
+#   typescript/prisma/ts-node (devDependencies) mesmo com NODE_ENV=production.
+# - Demo usa `prisma db push` (sem histórico de migrations). Em produção
+#   real, gere migrations e troque por `prisma migrate deploy`.
+
+services:
+  - type: web
+    name: vonue
+    runtime: node
+    plan: free
+    buildCommand: >
+      npm install --include=dev &&
+      npm run web:build &&
+      npm run build --workspace apps/api &&
+      npx prisma generate --schema apps/api/prisma/schema.prisma &&
+      npx prisma db push --schema apps/api/prisma/schema.prisma --skip-generate &&
+      npm run seed --workspace apps/api
+    startCommand: node apps/api/dist/app.js
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: vonue-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: vonue-redis
+          property: connectionString
+      # APP_PUBLIC_URL é só cosmético (texto do link de convite). Defina
+      # no painel com a URL do serviço se quiser; senão usa o default.
+      - key: APP_PUBLIC_URL
+        sync: false
+      # Pagamento real de ingresso (opcional): preencha no painel para
+      # ativar Stripe; vazio = sandbox.
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+
+  # Redis gerenciado (Render Key Value). É um SERVICE, não vai no topo.
+  - type: redis
+    name: vonue-redis
+    plan: free
+    ipAllowList: [] # apenas acesso interno (entre serviços do blueprint)
+    maxmemoryPolicy: noeviction
+
+databases:
+  - name: vonue-db
+    plan: free

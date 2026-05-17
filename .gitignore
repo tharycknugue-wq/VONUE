@@ -1,0 +1,46 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Env
+.env
+.env.local
+*.env
+!.env.example
+
+# Build
+apps/api/dist/
+**/dist/
+**/build/
+
+# Prisma
+apps/api/prisma/*.db
+apps/api/prisma/migrations/dev.db*
+
+# Expo
+apps/mobile/.expo/
+apps/mobile/.expo-shared/
+apps/mobile/web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Logs
+*.log
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Misc
+coverage/
+.tmp/

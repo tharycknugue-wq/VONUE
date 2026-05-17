@@ -1,0 +1,46 @@
+import { Router } from 'express';
+import authRoutes from './auth';
+import onboardingRoutes from './onboarding';
+import usersRoutes from './users';
+import eventsRoutes from './events';
+import mapRoutes from './map';
+import ticketsRoutes from './tickets';
+import paymentsRoutes from './payments';
+import nfcRoutes from './nfc';
+import storeRoutes from './store';
+import notificationsRoutes from './notifications';
+import photosRoutes from './photos';
+import djsRoutes from './djs';
+import tipsRoutes from './tips';
+import walletRoutes from './wallet';
+import timelineRoutes from './timeline';
+import searchRoutes from './search';
+import promotersRoutes from './promoters';
+import jobsRoutes from './jobs';
+import arvoreRoutes from './arvore';
+import selosRoutes from './selos';
+
+const router = Router();
+
+router.use('/auth', authRoutes);
+router.use('/onboarding', onboardingRoutes);
+router.use('/users', usersRoutes);
+router.use('/events', eventsRoutes);
+router.use('/map', mapRoutes);
+router.use('/tickets', ticketsRoutes);
+router.use('/payments', paymentsRoutes);
+router.use('/nfc', nfcRoutes);
+router.use('/store', storeRoutes);
+router.use('/notifications', notificationsRoutes);
+router.use('/photos', photosRoutes);
+router.use('/djs', djsRoutes);
+router.use('/tips', tipsRoutes);
+router.use('/wallet', walletRoutes);
+router.use('/timeline', timelineRoutes);
+router.use('/search', searchRoutes);
+router.use('/promoters', promotersRoutes);
+router.use('/jobs', jobsRoutes);
+router.use('/arvore', arvoreRoutes);
+router.use('/selos', selosRoutes);
+
+export default router;

@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Vonue",
+    "slug": "vonue",
+    "scheme": "vonue",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0B0B12",
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "app.vonue"
+    },
+    "android": {
+      "package": "app.vonue"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "extra": {
+      "apiUrl": "http://localhost:3000"
+    }
+  }
+}

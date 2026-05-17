@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(npm install --no-audit --no-fund 2>&1)",
+      "PowerShell($env:DATABASE_URL='postgresql://vonue:vonue123@localhost:5432/vonue'; npx prisma validate --schema=apps/api/prisma/schema.prisma; if \\($?\\) { npx prisma generate --schema=apps/api/prisma/schema.prisma })",
+      "PowerShell(npm run typecheck --workspace apps/api 2>&1)",
+      "PowerShell(npm run typecheck --workspace apps/mobile 2>&1)",
+      "PowerShell(\"---- MOBILE ----\")",
+      "PowerShell($env:DATABASE_URL='postgresql://vonue:vonue123@localhost:5432/vonue'; npx prisma validate --schema=apps/api/prisma/schema.prisma; if \\($?\\) { npx prisma generate --schema=apps/api/prisma/schema.prisma | Select-Object -Last 5 })",
+      "PowerShell($env:DATABASE_URL='postgresql://vonue:vonue123@localhost:5432/vonue'; npx prisma validate --schema=apps/api/prisma/schema.prisma; if \\($?\\) { npx prisma generate --schema=apps/api/prisma/schema.prisma | Select-Object -Last 3 })"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+node_modules
+**/node_modules
+apps/api/dist
+apps/mobile/dist
+apps/mobile/.expo
+.git
+.github
+*.log
+.env
+**/.env
+!.env.example

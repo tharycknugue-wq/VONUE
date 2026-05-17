@@ -1,0 +1,671 @@
+// Vonue — Schema Prisma
+// Modelo de dados completo do produto. As relações inversas obrigatórias
+// (dj, organizer, promoter, inviteLinks) foram adicionadas ao User para
+// que o schema valide e as migrations rodem.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== USUÁRIOS ====================
+
+model User {
+  id          String      @id @default(uuid())
+  username    String      @unique
+  name        String
+  email       String      @unique
+  password    String
+  phone       String?
+  cpf         String?     @unique
+  birthDate   DateTime
+  gender      Gender // MASCULINE | FEMININE
+  city        String?
+  state       String?
+  bio         String?
+  avatarUrl   String?
+  coverUrl    String?
+  fcmToken    String?
+  // Convite informado no cadastro. O vínculo de superior só é criado no
+  // primeiro checkin/selo (regra Drün/Rhän/Thrän) — então guardamos aqui.
+  pendingInviteCode String?
+  isVerified  Boolean     @default(false)
+  isOrigin    Boolean     @default(false) // Tharyck — origem do Vonue
+  nucleoType  NucleoType?
+  nucleoScore Json? // scores calculados de cada categoria
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Árvore Drün/Rhän/Thrän
+  superiorId String?
+  superior   User?   @relation("ArvoreTree", fields: [superiorId], references: [id])
+  thrans     User[]  @relation("ArvoreTree")
+
+  // Relações
+  selos               UserSelo[]
+  posts               Post[]
+  checkins            Checkin[]
+  tickets             Ticket[]
+  sentNFC             NFCConnection[]      @relation("NFCSender")
+  receivedNFC         NFCConnection[]      @relation("NFCReceiver")
+  followingDJs        DJFollow[]
+  onboarding          OnboardingResult?
+  location            UserLocation?
+  professionalProfile ProfessionalProfile?
+  inviteLinks         InviteLink[]
+  notifications       Notification[]
+  dj                  DJ?
+  organizer           Organizer?
+  promoter            Promoter?
+
+  @@index([username])
+  @@index([nucleoType])
+}
+
+enum Gender {
+  MASCULINE
+  FEMININE
+}
+
+enum NucleoType {
+  FULLON
+  PROGRESSIVO
+  DARK_FOREST
+  TECHNO
+  FAROFEIRO
+  MISTICO
+}
+
+// ==================== ONBOARDING ====================
+
+model OnboardingResult {
+  id          String     @id @default(uuid())
+  userId      String     @unique
+  user        User       @relation(fields: [userId], references: [id])
+  answers     Json // array de respostas
+  scores      Json // { fullon: 12, progressivo: 8, dark_forest: 3, ... }
+  nucleoType  NucleoType
+  completedAt DateTime   @default(now())
+}
+
+// ==================== ÁRVORE DRÜN/RHÄN/THRÄN ====================
+
+model InviteLink {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  code      String    @unique @default(cuid())
+  usedBy    String? // userId de quem usou
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  expiresAt DateTime? // opcional
+
+  @@index([code])
+  @@index([userId])
+}
+
+// ==================== NFC ====================
+
+model NFCConnection {
+  id          String    @id @default(uuid())
+  senderId    String
+  receiverId  String
+  sender      User      @relation("NFCSender", fields: [senderId], references: [id])
+  receiver    User      @relation("NFCReceiver", fields: [receiverId], references: [id])
+  status      NFCStatus @default(PENDING)
+  connectedAt DateTime  @default(now())
+  expiresAt   DateTime // 1h para arrependimento
+
+  @@unique([senderId, receiverId])
+}
+
+enum NFCStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+// ==================== EVENTOS ====================
+
+model Event {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  date          DateTime
+  endDate       DateTime?
+  venueId       String
+  venue         Venue     @relation(fields: [venueId], references: [id])
+  organizerId   String
+  organizer     Organizer @relation(fields: [organizerId], references: [id])
+  styles        String[] // ["FULLON", "DARK", "PROG"]
+  coverImageUrl String?
+  isPublished   Boolean   @default(false)
+  isSoldOut     Boolean   @default(false)
+  capacity      Int?
+  createdAt     DateTime  @default(now())
+
+  lineup    LineupEntry[]
+  tickets   TicketType[]
+  checkins  Checkin[]
+  photos    Photo[]
+  selos     Selo[]
+  promoters EventPromoter[]
+  jobs      JobPosting[]
+
+  @@index([date])
+  @@index([styles])
+}
+
+model Venue {
+  id          String  @id @default(uuid())
+  name        String
+  address     String
+  city        String
+  state       String
+  lat         Float
+  lng         Float
+  capacity    Int?
+  mapImageUrl String?
+  events      Event[]
+}
+
+model LineupEntry {
+  id        String    @id @default(uuid())
+  eventId   String
+  event     Event     @relation(fields: [eventId], references: [id])
+  djId      String
+  dj        DJ        @relation(fields: [djId], references: [id])
+  startTime DateTime?
+  endTime   DateTime?
+  order     Int
+}
+
+// ==================== DJS ====================
+
+model DJ {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  artistName  String
+  bio         String?
+  style       String[]
+  bpm         Int?
+  country     String?
+  socialLinks Json?
+  rank        Int      @default(0)
+  rankScore   Float    @default(0)
+  createdAt   DateTime @default(now())
+
+  lineup    LineupEntry[]
+  followers DJFollow[]
+  tips      Tip[]
+
+  @@index([artistName])
+}
+
+model Tip {
+  id         String    @id @default(uuid())
+  fromId     String // user que mandou a gorjeta
+  djId       String
+  dj         DJ        @relation(fields: [djId], references: [id])
+  eventId    String? // gorjeta durante um evento (opcional)
+  amount     Float
+  commission Float // 20% Vonue
+  netAmount  Float // o que o DJ recebe (80%)
+  message    String?
+  paymentId  String?
+  status     TipStatus @default(PENDING)
+  createdAt  DateTime  @default(now())
+
+  @@index([djId, status])
+  @@index([fromId])
+}
+
+enum TipStatus {
+  PENDING
+  PAID
+}
+
+model DJFollow {
+  userId    String
+  djId      String
+  user      User     @relation(fields: [userId], references: [id])
+  dj        DJ       @relation(fields: [djId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@id([userId, djId])
+}
+
+// ==================== INGRESSOS ====================
+
+model TicketType {
+  id       String   @id @default(uuid())
+  eventId  String
+  event    Event    @relation(fields: [eventId], references: [id])
+  name     String // "Lote 1", "VIP", etc.
+  price    Float
+  quantity Int
+  sold     Int      @default(0)
+  isActive Boolean  @default(true)
+  tickets  Ticket[]
+}
+
+model Ticket {
+  id           String       @id @default(uuid())
+  userId       String
+  user         User         @relation(fields: [userId], references: [id])
+  ticketTypeId String
+  ticketType   TicketType   @relation(fields: [ticketTypeId], references: [id])
+  promoterId   String?
+  promoter     Promoter?    @relation(fields: [promoterId], references: [id])
+  qrCode       String       @unique @default(uuid())
+  status       TicketStatus @default(ACTIVE)
+  purchasedAt  DateTime     @default(now())
+  checkedInAt  DateTime?
+  paymentId    String?
+
+  @@index([userId])
+  @@index([qrCode])
+}
+
+enum TicketStatus {
+  ACTIVE
+  USED
+  CANCELLED
+  REFUNDED
+}
+
+// ==================== CHECKIN ====================
+
+model Checkin {
+  id        String   @id @default(uuid())
+  userId    String
+  eventId   String
+  user      User     @relation(fields: [userId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id])
+  lat       Float?
+  lng       Float?
+  checkedAt DateTime @default(now())
+
+  @@unique([userId, eventId])
+}
+
+// ==================== SELOS ====================
+
+model Selo {
+  id          String   @id @default(uuid())
+  eventId     String?
+  event       Event?   @relation(fields: [eventId], references: [id])
+  name        String
+  description String?
+  emoji       String
+  imageUrl    String?
+  type        SeloType
+  criteria    Json? // regras para ganhar o selo
+  createdAt   DateTime @default(now())
+
+  users UserSelo[]
+}
+
+model UserSelo {
+  id       String   @id @default(uuid())
+  userId   String
+  seloId   String
+  user     User     @relation(fields: [userId], references: [id])
+  selo     Selo     @relation(fields: [seloId], references: [id])
+  earnedAt DateTime @default(now())
+  metadata Json?
+
+  @@unique([userId, seloId])
+}
+
+enum SeloType {
+  EVENT // presente num evento específico
+  CONNECTOR // selos da árvore (Drün/Rhän/Thrän)
+  ACHIEVEMENT // conquistas gerais
+  SPECIAL // edições limitadas
+}
+
+// ==================== LOCALIZAÇÃO ====================
+
+model UserLocation {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  eventId   String? // em qual evento está
+  lat       Float
+  lng       Float
+  isVisible Boolean  @default(true) // modo fantasma = false
+  updatedAt DateTime @updatedAt
+}
+
+// ==================== FOTOS ====================
+
+model Photo {
+  id             String       @id @default(uuid())
+  eventId        String
+  event          Event        @relation(fields: [eventId], references: [id])
+  photographerId String
+  photographer   Professional @relation(fields: [photographerId], references: [id])
+  imageUrl       String
+  thumbnailUrl   String?
+  isPublic       Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+
+  tags PhotoTag[]
+}
+
+model PhotoTag {
+  id        String    @id @default(uuid())
+  photoId   String
+  userId    String
+  photo     Photo     @relation(fields: [photoId], references: [id])
+  status    TagStatus @default(PENDING)
+  createdAt DateTime  @default(now())
+}
+
+enum TagStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ==================== POSTS ====================
+
+model Post {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  eventId   String?
+  content   String?
+  mediaUrls String[]
+  likes     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  comments Comment[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  postId    String
+  userId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  content   String
+  createdAt DateTime @default(now())
+}
+
+// ==================== NOTIFICAÇÕES ====================
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  title     String
+  body      String
+  data      Json?
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, read])
+}
+
+enum NotificationType {
+  THRAN
+  SELO
+  NFC
+  ORDER
+  EVENT
+  SYSTEM
+}
+
+// ==================== PROFISSIONAIS ====================
+
+model ProfessionalProfile {
+  id          String           @id @default(uuid())
+  userId      String           @unique
+  user        User             @relation(fields: [userId], references: [id])
+  type        ProfessionalType
+  bio         String?
+  rating      Float            @default(0)
+  ratingCount Int              @default(0)
+  portfolio   String[] // URLs
+  isAvailable Boolean          @default(true)
+  priceRange  String?
+  region      String?
+  createdAt   DateTime         @default(now())
+}
+
+enum ProfessionalType {
+  DJ
+  PHOTOGRAPHER
+  VIDEOGRAPHER
+  SOUND_TECH
+  LIGHT_TECH
+  BARTENDER
+  SECURITY
+  STRUCTURE
+  FREELANCER
+}
+
+model Professional {
+  id     String  @id @default(uuid())
+  userId String  @unique
+  photos Photo[]
+}
+
+// ==================== ORGANIZADORES ====================
+
+model Organizer {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  companyName String?
+  rating      Float    @default(0)
+  isVerified  Boolean  @default(false)
+  events      Event[]
+  jobs        JobPosting[]
+}
+
+// ==================== VAGAS / FREELANCER ====================
+
+model JobPosting {
+  id          String           @id @default(uuid())
+  eventId     String
+  event       Event            @relation(fields: [eventId], references: [id])
+  organizerId String
+  organizer   Organizer        @relation(fields: [organizerId], references: [id])
+  role        ProfessionalType
+  title       String
+  description String?
+  budget      Float?
+  status      JobStatus        @default(OPEN)
+  hiredUserId String?
+  createdAt   DateTime         @default(now())
+
+  applications JobApplication[]
+
+  @@index([status])
+}
+
+model JobApplication {
+  id        String            @id @default(uuid())
+  jobId     String
+  job       JobPosting        @relation(fields: [jobId], references: [id])
+  userId    String
+  message   String?
+  status    ApplicationStatus @default(PENDING)
+  createdAt DateTime          @default(now())
+
+  @@unique([jobId, userId])
+}
+
+enum JobStatus {
+  OPEN
+  FILLED
+  CLOSED
+}
+
+enum ApplicationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+// ==================== PROMOTERS ====================
+
+model Promoter {
+  id         String          @id @default(uuid())
+  userId     String          @unique
+  user       User            @relation(fields: [userId], references: [id])
+  rating     Float           @default(0)
+  isVerified Boolean         @default(false)
+  totalSales Int             @default(0)
+  tickets    Ticket[]
+  events     EventPromoter[]
+}
+
+model EventPromoter {
+  eventId    String
+  promoterId String
+  event      Event    @relation(fields: [eventId], references: [id])
+  promoter   Promoter @relation(fields: [promoterId], references: [id])
+  commission Float    @default(0.1) // 10%
+
+  @@id([eventId, promoterId])
+}
+
+// ==================== MARKETPLACE ====================
+
+model Product {
+  id          String          @id @default(uuid())
+  sellerId    String
+  eventId     String?
+  name        String
+  description String?
+  price       Float
+  images      String[]
+  stock       Int
+  category    ProductCategory
+  isActive    Boolean         @default(true)
+  createdAt   DateTime        @default(now())
+
+  orders OrderItem[]
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  buyerId   String
+  total     Float
+  status    OrderStatus @default(PENDING)
+  paymentId String?
+  createdAt DateTime    @default(now())
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Float
+  order     Order   @relation(fields: [orderId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  DELIVERED
+  DISPUTED
+  REFUNDED
+}
+
+enum ProductCategory {
+  TICKET
+  CLOTHING
+  ACCESSORY
+  EQUIPMENT
+  OTHER
+}
+
+// ==================== CARTEIRA / REPASSE ====================
+
+model Wallet {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  available      Float    @default(0)
+  totalEarned    Float    @default(0)
+  totalWithdrawn Float    @default(0)
+  updatedAt      DateTime @updatedAt
+
+  entries     LedgerEntry[]
+  withdrawals Withdrawal[]
+}
+
+model LedgerEntry {
+  id          String     @id @default(uuid())
+  walletId    String
+  wallet      Wallet     @relation(fields: [walletId], references: [id])
+  type        LedgerType
+  amount      Float // sempre positivo; o sinal é dado pelo type
+  description String
+  refType     String?
+  refId       String?
+  createdAt   DateTime   @default(now())
+
+  @@index([walletId])
+}
+
+model Withdrawal {
+  id        String           @id @default(uuid())
+  walletId  String
+  wallet    Wallet           @relation(fields: [walletId], references: [id])
+  amount    Float
+  status    WithdrawalStatus @default(PAID)
+  createdAt DateTime         @default(now())
+
+  @@index([walletId])
+}
+
+enum LedgerType {
+  SALE
+  TIP
+  TICKET
+  WITHDRAWAL
+}
+
+enum WithdrawalStatus {
+  REQUESTED
+  PAID
+}
+
+// ==================== AVALIAÇÕES ====================
+
+model Review {
+  id          String       @id @default(uuid())
+  reviewerId  String // quem avalia
+  targetId    String // quem é avaliado
+  targetType  ReviewTarget
+  eventId     String? // avaliação vinculada a evento
+  rating      Int // 1-5
+  comment     String?
+  isAnonymous Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+
+  @@unique([reviewerId, targetId, eventId])
+}
+
+enum ReviewTarget {
+  DJ
+  ORGANIZER
+  PROMOTER
+  PHOTOGRAPHER
+  FREELANCER
+}

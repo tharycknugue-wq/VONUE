@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: vonue-postgres
+    environment:
+      POSTGRES_USER: vonue
+      POSTGRES_PASSWORD: vonue123
+      POSTGRES_DB: vonue
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vonue -d vonue"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: vonue-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # App completo (web + API) via container — usa o Dockerfile de
+  # produção da raiz. Em dev normalmente roda-se `npm run api` local.
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vonue-api
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://vonue:vonue123@postgres:5432/vonue
+      REDIS_URL: redis://redis:6379
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    profiles:
+      - full
+
+volumes:
+  pgdata:
+  redisdata:

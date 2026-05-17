@@ -1,0 +1,24 @@
+{
+  "name": "vonue",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vonue — A cena em um lugar. Rede social para raves e festivais eletrônicos.",
+  "workspaces": [
+    "apps/api",
+    "apps/mobile"
+  ],
+  "scripts": {
+    "api": "npm run dev --workspace apps/api",
+    "mobile": "npm run start --workspace apps/mobile",
+    "db:up": "docker-compose up -d postgres redis",
+    "db:down": "docker-compose down",
+    "db:migrate": "npm run migrate --workspace apps/api",
+    "db:seed": "npm run seed --workspace apps/api",
+    "web:build": "npm run web:export --workspace apps/mobile",
+    "share": "npm run web:build && npm run api"
+  },
+  "engines": {
+    "node": ">=18",
+    "npm": ">=9"
+  }
+}
