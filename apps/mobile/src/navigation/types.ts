@@ -1,5 +1,19 @@
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type {
+  NativeStackScreenProps,
+  NativeStackNavigationProp,
+} from '@react-navigation/native-stack';
 import type { NucleoType } from '../theme/colors';
+
+// Abas da casca principal (bottom tabs). Vivem dentro da rota `Home`
+// do stack — telas de detalhe continuam no stack e são alcançadas via
+// useNavigation tipado como RootStackParamList.
+export type MainTabParamList = {
+  Feed: undefined;
+  Explore: undefined;
+  Create: undefined;
+  ConexoesTab: undefined;
+  Profile: undefined;
+};
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -55,3 +69,6 @@ export type ScreenProps<T extends keyof RootStackParamList> = NativeStackScreenP
   RootStackParamList,
   T
 >;
+
+// Navegação tipada p/ uso dentro das abas (push p/ telas do stack pai).
+export type RootNav = NativeStackNavigationProp<RootStackParamList>;

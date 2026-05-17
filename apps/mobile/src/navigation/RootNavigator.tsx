@@ -8,7 +8,7 @@ import { WelcomeScreen } from '../screens/auth/WelcomeScreen';
 import { RegisterScreen } from '../screens/auth/RegisterScreen';
 import { OnboardingScreen } from '../screens/auth/OnboardingScreen';
 import { NucleoRevealScreen } from '../screens/auth/NucleoRevealScreen';
-import { HomeScreen } from '../screens/home/HomeScreen';
+import { MainTabs } from './MainTabs';
 import { ArvoreScreen } from '../screens/arvore/ArvoreScreen';
 import { ConfirmSuperiorScreen } from '../screens/arvore/ConfirmSuperiorScreen';
 import { SelosScreen } from '../screens/selos/SelosScreen';
@@ -86,7 +86,7 @@ export function RootNavigator() {
               component={NucleoRevealScreen}
               options={{ gestureEnabled: false }}
             />
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Home" component={MainTabs} />
             <Stack.Group
               screenOptions={{
                 headerShown: true,
