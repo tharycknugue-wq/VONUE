@@ -42,9 +42,13 @@ export function OnboardingScreen({ navigation }: ScreenProps<'Onboarding'>) {
     setSubmitting(true);
     setError(null);
     try {
-      const result = await api.completeOnboarding([...selected]);
+      const genres = [...selected];
+      const result = await api.completeOnboarding(genres);
       await applyNucleo(result.nucleoType);
-      navigation.navigate('NucleoReveal', { nucleoType: result.nucleoType });
+      navigation.navigate('NucleoReveal', {
+        nucleoType: result.nucleoType,
+        genres,
+      });
     } catch (e) {
       setError(
         e instanceof ApiError ? e.message : 'Erro ao descobrir sua tribo.'

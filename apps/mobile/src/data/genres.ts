@@ -18,6 +18,11 @@ export interface GenreSection {
   genres: Genre[];
 }
 
+// Lista achatada — usada pra resolver id → { name, color } no reveal.
+export function genreById(id: string): Genre | undefined {
+  return GENRES_FLAT.find((g) => g.id === id);
+}
+
 export const GENRE_SECTIONS: GenreSection[] = [
   {
     icon: '🌀',
@@ -187,3 +192,5 @@ export const GENRE_SECTIONS: GenreSection[] = [
     ],
   },
 ];
+
+export const GENRES_FLAT: Genre[] = GENRE_SECTIONS.flatMap((s) => s.genres);

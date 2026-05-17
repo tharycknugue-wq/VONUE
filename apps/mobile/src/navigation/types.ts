@@ -19,7 +19,7 @@ export type RootStackParamList = {
   Welcome: undefined;
   Register: undefined;
   Onboarding: undefined;
-  NucleoReveal: { nucleoType: NucleoType };
+  NucleoReveal: { nucleoType: NucleoType; genres?: string[] };
   Home: undefined;
   Arvore: undefined;
   Selos: undefined;

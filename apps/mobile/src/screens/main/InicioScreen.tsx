@@ -18,7 +18,7 @@ import {
 } from '../../components/orkut';
 import { palette, orkut, glow } from '../../theme/colors';
 import { font } from '../../theme/fonts';
-import { NUCLEO_META } from '../../theme/colors';
+import { TRIBOS } from '../../data/tribos';
 import { useAuthStore } from '../../store/authStore';
 import { useAppNav } from '../../hooks/useAppNav';
 import { api, type EventListItem, type DJListItem } from '../../services/api';
@@ -33,7 +33,7 @@ const EV_EMOJI = ['🌳', '🌀', '⚡'];
 
 function MiniProfile() {
   const user = useAuthStore((s) => s.user);
-  const meta = user?.nucleoType ? NUCLEO_META[user.nucleoType] : null;
+  const tribo = user?.nucleoType ? TRIBOS[user.nucleoType] : null;
   const [stats, setStats] = useState({ ev: 0, selos: 0, thrans: 0 });
 
   useFocusEffect(
@@ -64,10 +64,10 @@ function MiniProfile() {
         <PhotoAvatar size={78} />
         <Text style={s.mpName}>{user?.name ?? 'raver'}</Text>
         <Text style={s.mpUser}>@{user?.username ?? '—'}</Text>
-        {meta && (
-          <View style={[s.mpNucleo, { borderColor: meta.color }]}>
-            <Text style={[s.mpNucleoTx, { color: meta.color }]}>
-              {meta.emoji} {meta.label.toUpperCase()}
+        {tribo && (
+          <View style={[s.mpNucleo, { borderColor: tribo.color }]}>
+            <Text style={[s.mpNucleoTx, { color: tribo.color }]}>
+              {tribo.emoji} TRIBO {tribo.name}
             </Text>
           </View>
         )}
