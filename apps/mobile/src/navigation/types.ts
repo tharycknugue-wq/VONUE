@@ -8,11 +8,11 @@ import type { NucleoType } from '../theme/colors';
 // do stack — telas de detalhe continuam no stack e são alcançadas via
 // useNavigation tipado como RootStackParamList.
 export type MainTabParamList = {
-  Feed: undefined;
-  Explore: undefined;
-  Create: undefined;
-  ConexoesTab: undefined;
-  Profile: undefined;
+  Inicio: undefined;
+  Eventos: undefined;
+  Comunidades: undefined;
+  Scraps: undefined;
+  Perfil: undefined;
 };
 
 export type RootStackParamList = {

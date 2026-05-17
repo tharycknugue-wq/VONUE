@@ -1,29 +1,30 @@
 import { Platform, Text } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import type { MainTabParamList } from './types';
-import { palette, glow } from '../theme/colors';
-import { FeedScreen } from '../screens/main/FeedScreen';
-import { ExploreScreen } from '../screens/main/ExploreScreen';
-import { CreateScreen } from '../screens/main/CreateScreen';
-import { ConexoesTabScreen } from '../screens/main/ConexoesTabScreen';
-import { ProfileScreen } from '../screens/main/ProfileScreen';
+import { palette, orkut, glow } from '../theme/colors';
+import { font } from '../theme/fonts';
+import { InicioScreen } from '../screens/main/InicioScreen';
+import { EventosScreen } from '../screens/main/EventosScreen';
+import { ComunidadesScreen } from '../screens/main/ComunidadesScreen';
+import { ScrapsScreen } from '../screens/main/ScrapsScreen';
+import { PerfilScreen } from '../screens/main/PerfilScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const ICONS: Record<keyof MainTabParamList, string> = {
-  Feed: '⌂',
-  Explore: '⌕',
-  Create: '＋',
-  ConexoesTab: '📲',
-  Profile: '◔',
+  Inicio: '🏠',
+  Eventos: '🎉',
+  Comunidades: '👥',
+  Scraps: '💬',
+  Perfil: '👤',
 };
 
 const LABELS: Record<keyof MainTabParamList, string> = {
-  Feed: 'Início',
-  Explore: 'Explorar',
-  Create: 'Criar',
-  ConexoesTab: 'Conexões',
-  Profile: 'Perfil',
+  Inicio: 'INÍCIO',
+  Eventos: 'EVENTOS',
+  Comunidades: 'COMUNIDADES',
+  Scraps: 'SCRAPS',
+  Perfil: 'PERFIL',
 };
 
 export function MainTabs() {
@@ -31,25 +32,27 @@ export function MainTabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: palette.primary,
-        tabBarInactiveTintColor: palette.textFaint,
+        tabBarActiveTintColor: orkut.blue,
+        tabBarInactiveTintColor: palette.textMuted,
         tabBarStyle: {
-          backgroundColor: palette.bgSoft,
-          borderTopColor: palette.border,
-          borderTopWidth: 1,
-          height: Platform.OS === 'ios' ? 86 : 66,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 10,
-          paddingTop: 8,
+          backgroundColor: orkut.bg2,
+          borderTopColor: palette.borderBlue,
+          borderTopWidth: 2,
+          height: Platform.OS === 'ios' ? 84 : 62,
+          paddingBottom: Platform.OS === 'ios' ? 26 : 8,
+          paddingTop: 7,
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
+        tabBarLabelStyle: {
+          fontFamily: font.mono,
+          fontSize: 7,
+          letterSpacing: 1,
+        },
         tabBarLabel: LABELS[route.name],
-        tabBarIcon: ({ focused, color }) => (
+        tabBarIcon: ({ focused }) => (
           <Text
             style={[
-              { fontSize: route.name === 'Create' ? 26 : 22, color },
-              focused && route.name !== 'ConexoesTab'
-                ? glow(palette.primary, 10, 0.7)
-                : null,
+              { fontSize: 19 },
+              focused ? glow(orkut.blue, 8, 0.7) : { opacity: 0.6 },
             ]}
           >
             {ICONS[route.name]}
@@ -57,11 +60,11 @@ export function MainTabs() {
         ),
       })}
     >
-      <Tab.Screen name="Feed" component={FeedScreen} />
-      <Tab.Screen name="Explore" component={ExploreScreen} />
-      <Tab.Screen name="Create" component={CreateScreen} />
-      <Tab.Screen name="ConexoesTab" component={ConexoesTabScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen name="Inicio" component={InicioScreen} />
+      <Tab.Screen name="Eventos" component={EventosScreen} />
+      <Tab.Screen name="Comunidades" component={ComunidadesScreen} />
+      <Tab.Screen name="Scraps" component={ScrapsScreen} />
+      <Tab.Screen name="Perfil" component={PerfilScreen} />
     </Tab.Navigator>
   );
 }

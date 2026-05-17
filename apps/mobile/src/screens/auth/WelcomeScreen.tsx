@@ -1,14 +1,14 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Button } from '../../components/Button';
-import { palette, glow } from '../../theme/colors';
+import { palette, orkut, glow } from '../../theme/colors';
+import { font } from '../../theme/fonts';
 import type { ScreenProps } from '../../navigation/types';
 
 export function WelcomeScreen({ navigation }: ScreenProps<'Welcome'>) {
   return (
     <LinearGradient
-      colors={['#1A0B3D', '#0C0C16', '#07070D']}
+      colors={['#1A1E35', '#131625', '#0D0F1A']}
       start={{ x: 0.1, y: 0 }}
       end={{ x: 0.9, y: 1 }}
       style={styles.fill}
@@ -16,10 +16,8 @@ export function WelcomeScreen({ navigation }: ScreenProps<'Welcome'>) {
       <SafeAreaView style={styles.fill} edges={['top', 'bottom']}>
         <View style={styles.container}>
           <View style={styles.hero}>
-            <View style={[styles.orb, glow(palette.primaryDeep, 60, 0.55)]} />
-            <Text style={[styles.logo, glow(palette.primary, 24, 0.8)]}>
-              VONUE
-            </Text>
+            <View style={[styles.orb, glow(orkut.blue, 60, 0.5)]} />
+            <Text style={[styles.logo, glow(orkut.blue, 22, 0.7)]}>VONUE</Text>
             <View style={styles.taglineWrap}>
               <View style={styles.line} />
               <Text style={styles.tagline}>A CENA EM UM LUGAR</Text>
@@ -27,21 +25,19 @@ export function WelcomeScreen({ navigation }: ScreenProps<'Welcome'>) {
             </View>
           </View>
 
-          <View style={styles.body}>
-            <Text style={styles.desc}>
-              Raves, festivais e a tribo eletrônica do Brasil — descoberta,
-              conexão e memória num só ecossistema.
-            </Text>
-          </View>
+          <Text style={styles.desc}>
+            Raves, festivais e a tribo eletrônica do Brasil. Reencontre a
+            cena: amigos, scraps, comunidades, árvore e a sua história.
+          </Text>
 
           <View style={styles.footer}>
-            <Button
-              label="Entrar na cena"
+            <Pressable
+              style={styles.cta}
               onPress={() => navigation.navigate('Register')}
-            />
-            <Text style={styles.footnote}>
-              18+ · sua cena, sua tribo, sua história
-            </Text>
+            >
+              <Text style={styles.ctaTx}>ENTRAR NA CENA</Text>
+            </Pressable>
+            <Text style={styles.foot}>18+ · sua tribo, sua história</Text>
           </View>
         </View>
       </SafeAreaView>
@@ -57,19 +53,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 28,
     paddingVertical: 44,
   },
-  hero: { marginTop: 72, alignItems: 'center' },
+  hero: { marginTop: 76, alignItems: 'center' },
   orb: {
     position: 'absolute',
-    top: -10,
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: palette.primaryDeep,
-    opacity: 0.18,
+    top: -8,
+    width: 170,
+    height: 170,
+    borderRadius: 85,
+    backgroundColor: orkut.blue,
+    opacity: 0.16,
   },
   logo: {
-    fontSize: 60,
-    fontWeight: '900',
+    fontFamily: font.disp,
+    fontSize: 52,
     color: palette.text,
     letterSpacing: 8,
   },
@@ -77,28 +73,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    marginTop: 14,
+    marginTop: 16,
   },
-  line: { width: 28, height: 1, backgroundColor: palette.primary, opacity: 0.6 },
+  line: { width: 26, height: 1, backgroundColor: orkut.blue, opacity: 0.6 },
   tagline: {
-    fontSize: 13,
-    color: palette.primary,
-    fontWeight: '800',
+    fontFamily: font.mono,
+    fontSize: 11,
+    color: palette.link,
     letterSpacing: 3,
   },
-  body: { paddingHorizontal: 8 },
   desc: {
+    fontFamily: font.bodyLight,
     textAlign: 'center',
-    fontSize: 16,
-    lineHeight: 25,
+    fontSize: 15,
+    lineHeight: 24,
     color: palette.textMuted,
   },
   footer: { gap: 14 },
-  footnote: {
+  cta: {
+    backgroundColor: orkut.blue,
+    borderRadius: 10,
+    paddingVertical: 16,
+    alignItems: 'center',
+    ...glow(orkut.blue, 18, 0.5),
+  },
+  ctaTx: {
+    fontFamily: font.mono,
+    fontSize: 12,
+    color: '#fff',
+    letterSpacing: 3,
+  },
+  foot: {
+    fontFamily: font.mono,
     textAlign: 'center',
     color: palette.textFaint,
-    fontSize: 12,
-    fontWeight: '600',
-    letterSpacing: 0.5,
+    fontSize: 9,
+    letterSpacing: 1,
   },
 });
