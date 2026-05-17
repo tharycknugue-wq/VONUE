@@ -5,8 +5,8 @@
     "scheme": "vonue",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "dark",
-    "backgroundColor": "#0B0B12",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#E3EAF3",
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": false,

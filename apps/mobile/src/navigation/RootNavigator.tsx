@@ -1,5 +1,5 @@
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
-import { NavigationContainer, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { RootStackParamList } from './types';
 import { palette } from '../theme/colors';
@@ -45,8 +45,15 @@ import { PostJobScreen } from '../screens/jobs/PostJobScreen';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const navTheme = {
-  ...DarkTheme,
-  colors: { ...DarkTheme.colors, background: palette.bg },
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: palette.bg,
+    card: palette.surface,
+    text: palette.text,
+    border: palette.border,
+    primary: palette.primary,
+  },
 };
 
 export function RootNavigator() {

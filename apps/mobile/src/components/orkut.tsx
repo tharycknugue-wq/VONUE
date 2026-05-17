@@ -9,24 +9,13 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { palette, orkut, glow, space, radius } from '../theme/colors';
+import { palette, orkut, gradients, glow, space, radius } from '../theme/colors';
 import { font } from '../theme/fonts';
 import { useAppNav } from '../hooks/useAppNav';
 
 type Grad = readonly [string, string];
 
-/* ===================== Ambient + Screen ===================== */
-
-function Ambient() {
-  return (
-    <View pointerEvents="none" style={styles.ambient}>
-      <View style={[styles.blob, { top: -60, left: -40, backgroundColor: orkut.blue }]} />
-      <View style={[styles.blob, { top: 120, right: -70, backgroundColor: orkut.orange }]} />
-      <View style={[styles.blob, { bottom: 40, left: -50, backgroundColor: orkut.violet }]} />
-      <View style={[styles.blob, { bottom: -60, right: -30, backgroundColor: orkut.magenta }]} />
-    </View>
-  );
-}
+/* ===================== Screen ===================== */
 
 export function OrkutScreen({
   children,
@@ -37,7 +26,6 @@ export function OrkutScreen({
 }) {
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
-      <Ambient />
       <AppHeader current={current} />
       <ScrollView
         style={styles.flex}
@@ -71,9 +59,14 @@ export function AppHeader({ current }: { current: string }) {
 
   return (
     <View style={styles.header}>
-      <View style={styles.headerTop}>
+      <LinearGradient
+        colors={gradients.header as unknown as string[]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.headerTop}
+      >
         <Pressable onPress={() => tab.navigate('Inicio')}>
-          <Text style={styles.logo}>VONUE</Text>
+          <Text style={styles.logo}>vonue</Text>
         </Pressable>
         <View style={styles.headerRight}>
           <Pressable
@@ -94,7 +87,7 @@ export function AppHeader({ current }: { current: string }) {
             </View>
           </Pressable>
         </View>
-      </View>
+      </LinearGradient>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -385,21 +378,6 @@ export const styles = StyleSheet.create({
   flex: { flex: 1 },
   scroll: { paddingBottom: 28 },
   pressed: { opacity: 0.7 },
-  ambient: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 0,
-  },
-  blob: {
-    position: 'absolute',
-    width: 240,
-    height: 240,
-    borderRadius: 120,
-    opacity: 0.07,
-  },
 
   /* Header */
   header: {
@@ -412,15 +390,15 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: 52,
+    height: 54,
     paddingHorizontal: space.lg,
   },
   logo: {
     fontFamily: font.disp,
-    fontSize: 20,
-    color: orkut.blue,
-    letterSpacing: 3,
-    ...glow(orkut.blue, 10, 0.5),
+    fontSize: 25,
+    color: '#FFFFFF',
+    letterSpacing: 1,
+    ...glow('#7A0F52', 6, 0.4),
   },
   headerRight: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   bell: { position: 'relative' },
@@ -448,7 +426,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: 'rgba(255,107,0,0.4)',
+    borderColor: 'rgba(255,255,255,0.7)',
   },
   headerAvTx: { fontSize: 15 },
   navtabs: { paddingHorizontal: space.sm, gap: 0 },
@@ -556,13 +534,13 @@ export const styles = StyleSheet.create({
   feName: {
     fontFamily: font.disp,
     fontSize: 17,
-    color: palette.text,
+    color: '#FFFFFF',
     letterSpacing: 0.5,
   },
   feMeta: {
     fontFamily: font.mono,
     fontSize: 8,
-    color: palette.textMuted,
+    color: 'rgba(255,255,255,0.85)',
     letterSpacing: 1,
     marginTop: 3,
   },
@@ -589,9 +567,9 @@ export const styles = StyleSheet.create({
     color: palette.textMuted,
   },
   scrapText: {
-    fontFamily: font.bodyLight,
+    fontFamily: font.body,
     fontSize: 13,
-    color: 'rgba(240,242,255,0.72)',
+    color: '#33414F',
     lineHeight: 20,
   },
   scrapEvTag: {

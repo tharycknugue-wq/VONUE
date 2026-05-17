@@ -8,7 +8,7 @@ import type { ScreenProps } from '../../navigation/types';
 export function WelcomeScreen({ navigation }: ScreenProps<'Welcome'>) {
   return (
     <LinearGradient
-      colors={['#1A1E35', '#131625', '#0D0F1A']}
+      colors={['#FBE3F1', '#E9EFF8', '#E3EAF3']}
       start={{ x: 0.1, y: 0 }}
       end={{ x: 0.9, y: 1 }}
       style={styles.fill}
@@ -16,8 +16,8 @@ export function WelcomeScreen({ navigation }: ScreenProps<'Welcome'>) {
       <SafeAreaView style={styles.fill} edges={['top', 'bottom']}>
         <View style={styles.container}>
           <View style={styles.hero}>
-            <View style={[styles.orb, glow(orkut.blue, 60, 0.5)]} />
-            <Text style={[styles.logo, glow(orkut.blue, 22, 0.7)]}>VONUE</Text>
+            <View style={[styles.orb, glow(orkut.magenta, 60, 0.4)]} />
+            <Text style={[styles.logo, glow(orkut.magenta, 18, 0.4)]}>vonue</Text>
             <View style={styles.taglineWrap}>
               <View style={styles.line} />
               <Text style={styles.tagline}>A CENA EM UM LUGAR</Text>
@@ -60,14 +60,14 @@ const styles = StyleSheet.create({
     width: 170,
     height: 170,
     borderRadius: 85,
-    backgroundColor: orkut.blue,
-    opacity: 0.16,
+    backgroundColor: orkut.magenta,
+    opacity: 0.14,
   },
   logo: {
     fontFamily: font.disp,
-    fontSize: 52,
-    color: palette.text,
-    letterSpacing: 8,
+    fontSize: 54,
+    color: orkut.magenta,
+    letterSpacing: 1,
   },
   taglineWrap: {
     flexDirection: 'row',

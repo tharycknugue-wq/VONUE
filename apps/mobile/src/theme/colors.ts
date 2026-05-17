@@ -1,60 +1,62 @@
-// Identidade Vonue — Orkut nostálgico encontra psytrance.
-// As cores cruas da cena:
+// Identidade Vonue — Orkut clássico (claro) encontra psytrance.
+// Tema CLARO: nada de fundo preto. Fundo azul-claro, cards brancos,
+// cabeçalho rosa/magenta, texto escuro — nostalgia Orkut/Facebook 2008.
 export const orkut = {
-  blue: '#1A73E8',
-  orange: '#FF6B00',
-  yellow: '#FFD600',
-  magenta: '#FF2D9B',
-  violet: '#7B2FFF',
-  cyan: '#00E5CC',
-  green: '#AAFF00',
-  link: '#6BA5FF',
-  bg2: '#131625',
-  bg3: '#1A1E35',
+  blue: '#2E5AA8',
+  orange: '#E8730C',
+  yellow: '#E8A100',
+  magenta: '#E0218A',
+  violet: '#6A2BD9',
+  cyan: '#0E8FB0',
+  green: '#2FA84F',
+  link: '#1B5FBF',
+  bg2: '#FFFFFF', // superfície de card/widget
+  bg3: '#EDF2F8', // seção clara
 };
 
-// `palette` mantém TODAS as chaves usadas pelas ~35 telas de detalhe
-// (remapeadas para a paleta Orkut) — nada quebra.
+// `palette` mantém TODAS as chaves usadas pelas ~35 telas de detalhe —
+// só os VALORES mudam (escuro → claro). Tudo fica consistente de uma vez.
 export const palette = {
-  bg: '#0D0F1A',
-  bgSoft: '#131625',
-  surface: '#131625',
-  surfaceAlt: '#1A1E35',
-  surfaceGlass: 'rgba(255,255,255,0.05)',
-  border: 'rgba(255,255,255,0.09)',
-  borderSoft: 'rgba(255,255,255,0.06)',
-  borderBlue: 'rgba(26,115,232,0.3)',
-  text: '#F0F2FF',
-  textMuted: 'rgba(240,242,255,0.45)',
-  textFaint: 'rgba(240,242,255,0.28)',
-  primary: '#1A73E8',
-  primaryDeep: '#7B2FFF',
-  accent: '#00E5CC',
-  hot: '#FF2D9B',
-  danger: '#FF2D9B',
-  success: '#AAFF00',
-  gold: '#FFD600',
-  link: '#6BA5FF',
+  bg: '#E3EAF3',
+  bgSoft: '#EDF2F8',
+  surface: '#FFFFFF',
+  surfaceAlt: '#F3F6FB',
+  surfaceGlass: 'rgba(0,0,0,0.03)',
+  border: '#CBD8E6',
+  borderSoft: 'rgba(0,0,0,0.07)',
+  borderBlue: '#A9C5E6',
+  text: '#16202C',
+  textMuted: '#5A6B7B',
+  textFaint: '#93A2B2',
+  primary: '#2E5AA8',
+  primaryDeep: '#1C3A6B',
+  accent: '#0E8FB0',
+  hot: '#E0218A',
+  danger: '#D6336C',
+  success: '#2FA84F',
+  gold: '#E8A100',
+  link: '#1B5FBF',
 };
 
 export const gradients = {
-  brand: ['#1A73E8', '#7B2FFF', '#00E5CC'] as const,
-  hero: ['#1A1E35', '#131625', '#0D0F1A'] as const,
-  hot: ['#FF6B00', '#FF2D9B'] as const,
-  cyber: ['#00E5CC', '#7B2FFF'] as const,
-  sunrise: ['#FF6B00', '#FFD600'] as const,
-  blueviolet: ['#1A73E8', '#7B2FFF'] as const,
-  dark: ['#131625', '#0D0F1A'] as const,
+  brand: ['#E0218A', '#6A2BD9', '#1B5FBF'] as const,
+  hero: ['#F6DCEE', '#E3EAF3', '#FFFFFF'] as const,
+  header: ['#F5379B', '#E0218A', '#A81E97'] as const,
+  hot: ['#E8730C', '#E0218A'] as const,
+  cyber: ['#0E8FB0', '#6A2BD9'] as const,
+  sunrise: ['#E8730C', '#E8A100'] as const,
+  blueviolet: ['#2E5AA8', '#6A2BD9'] as const,
+  dark: ['#FFFFFF', '#EDF2F8'] as const,
 };
 
-// Sombra/glow neon (mapeia p/ box-shadow no react-native-web).
-export function glow(color: string, radius = 16, opacity = 0.5) {
+// Glow/sombra suave (mapeia p/ box-shadow no react-native-web).
+export function glow(color: string, radius = 14, opacity = 0.35) {
   return {
     shadowColor: color,
-    shadowOffset: { width: 0, height: 0 },
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: opacity,
     shadowRadius: radius,
-    elevation: Math.round(radius / 2),
+    elevation: Math.round(radius / 3),
   };
 }
 
@@ -83,41 +85,41 @@ export const NUCLEO_META: Record<NucleoType, NucleoMeta> = {
     tagline: 'Energia no pico, melodia épica, pista no talo.',
     emoji: '⚡',
     color: orkut.orange,
-    gradient: [orkut.orange, '#0D0F1A'],
+    gradient: [orkut.orange, '#FFFFFF'],
   },
   PROGRESSIVO: {
     label: 'Progressivo',
     tagline: 'A viagem hipnótica que constrói sem pressa.',
     emoji: '🌿',
     color: orkut.cyan,
-    gradient: [orkut.cyan, '#0D0F1A'],
+    gradient: [orkut.cyan, '#FFFFFF'],
   },
   DARK_FOREST: {
     label: 'Dark Forest',
     tagline: 'O escuro, o peso e a floresta de madrugada.',
     emoji: '🌑',
     color: orkut.violet,
-    gradient: [orkut.violet, '#0D0F1A'],
+    gradient: [orkut.violet, '#FFFFFF'],
   },
   TECHNO: {
     label: 'Techno',
     tagline: 'Kick reto, groove de máquina, precisão.',
     emoji: '🤖',
     color: orkut.blue,
-    gradient: [orkut.blue, '#0D0F1A'],
+    gradient: [orkut.blue, '#FFFFFF'],
   },
   FAROFEIRO: {
     label: 'Farofeiro',
     tagline: 'Vai em tudo. Reclama de tudo. Volta em tudo.',
     emoji: '🔥',
     color: orkut.magenta,
-    gradient: [orkut.magenta, '#0D0F1A'],
+    gradient: [orkut.magenta, '#FFFFFF'],
   },
   MISTICO: {
     label: 'Místico',
     tagline: 'Raiz, natureza e conexão no sunrise.',
     emoji: '🔮',
     color: orkut.yellow,
-    gradient: [orkut.yellow, '#0D0F1A'],
+    gradient: [orkut.yellow, '#FFFFFF'],
   },
 };

@@ -77,7 +77,7 @@ const st = StyleSheet.create({
     flex: 1,
     minHeight: 38,
     maxHeight: 90,
-    backgroundColor: 'rgba(255,255,255,0.04)',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
     borderColor: palette.borderBlue,
     borderRadius: 8,
