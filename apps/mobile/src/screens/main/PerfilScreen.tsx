@@ -19,11 +19,13 @@ import { palette, orkut } from '../../theme/colors';
 import { font } from '../../theme/fonts';
 import { TRIBOS } from '../../data/tribos';
 import { useAuthStore } from '../../store/authStore';
+import { useAppNav } from '../../hooks/useAppNav';
 import { api } from '../../services/api';
 import { DEPOIMENTOS, SCRAPS, RATINGS } from '../../data/social';
 
 function MiniCard() {
   const user = useAuthStore((s) => s.user);
+  const { root } = useAppNav();
   const tribo = user?.nucleoType ? TRIBOS[user.nucleoType] : null;
   return (
     <Widget title="MEU PERFIL">
@@ -38,6 +40,12 @@ function MiniCard() {
             </Text>
           </View>
         )}
+        <Pressable
+          style={st.changeTribo}
+          onPress={() => root?.navigate('Onboarding')}
+        >
+          <Text style={st.changeTriboTx}>↻ TROCAR MINHA TRIBO</Text>
+        </Pressable>
         <View style={st.ratings}>
           {RATINGS.map((r) => (
             <View key={r.label} style={st.ratingRow}>
@@ -169,6 +177,20 @@ const st = StyleSheet.create({
     fontSize: 7,
     letterSpacing: 1,
     textAlign: 'center',
+  },
+  changeTribo: {
+    marginTop: 10,
+    borderWidth: 1,
+    borderColor: palette.borderBlue,
+    borderRadius: 100,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+  },
+  changeTriboTx: {
+    fontFamily: font.mono,
+    fontSize: 8,
+    letterSpacing: 1.5,
+    color: palette.link,
   },
   ratings: {
     width: '100%',

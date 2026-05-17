@@ -67,7 +67,7 @@ export function NucleoRevealScreen({
             <Text style={styles.orbEmoji}>{tribo.emoji}</Text>
           </View>
 
-          <Text style={styles.pre}>VOCÊ É</Text>
+          <Text style={styles.pre}>SUA TRIBO É</Text>
           <Text
             style={[
               styles.name,
@@ -76,9 +76,6 @@ export function NucleoRevealScreen({
             ]}
           >
             {tribo.name}
-          </Text>
-          <Text style={[styles.genre, { color: tribo.color }]}>
-            {tribo.genre}
           </Text>
           <Text style={styles.sub}>{tribo.sub}</Text>
 
@@ -150,12 +147,6 @@ const styles = StyleSheet.create({
     fontSize: 52,
     letterSpacing: 4,
     marginBottom: 4,
-  },
-  genre: {
-    fontFamily: font.mono,
-    fontSize: 10,
-    letterSpacing: 4,
-    marginBottom: 5,
   },
   sub: {
     fontFamily: font.disp,

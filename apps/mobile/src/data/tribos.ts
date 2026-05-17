@@ -1,11 +1,10 @@
 import type { NucleoType } from '../theme/colors';
 
-// A "tribo" é a persona narrativa em cima de cada um dos 6 núcleos do
-// backend. (ZERAK/hitech e SAELEN/ambient do mockup caem em MORAN e
-// AURAN — os estilos deles já roteiam pra esses núcleos na API.)
+// A tribo é a persona narrativa em cima de cada um dos 6 núcleos do
+// backend. Nomes REAIS da cena (sem nomes fictícios). hitech cai em
+// Dark/Forest e ambient em Goa/Trance — os estilos já roteiam pra lá.
 export interface Tribo {
   name: string;
-  genre: string;
   sub: string;
   emoji: string;
   color: string; // legível no tema claro
@@ -14,8 +13,7 @@ export interface Tribo {
 
 export const TRIBOS: Record<NucleoType, Tribo> = {
   FULLON: {
-    name: 'VEKON',
-    genre: 'FULL ON',
+    name: 'FULL ON',
     sub: 'O GUERREIRO DA PISTA',
     emoji: '⚡',
     color: '#2E5AA8',
@@ -26,8 +24,7 @@ export const TRIBOS: Record<NucleoType, Tribo> = {
     ],
   },
   PROGRESSIVO: {
-    name: 'SYLAN',
-    genre: 'PROGRESSIVO',
+    name: 'PROGRESSIVO',
     sub: 'O VIAJANTE INTERIOR',
     emoji: '🌿',
     color: '#1F9D57',
@@ -38,8 +35,7 @@ export const TRIBOS: Record<NucleoType, Tribo> = {
     ],
   },
   DARK_FOREST: {
-    name: 'MORAN',
-    genre: 'DARK / FOREST',
+    name: 'DARK / FOREST',
     sub: 'O HABITANTE DAS SOMBRAS',
     emoji: '🌑',
     color: '#7B2FD9',
@@ -50,8 +46,7 @@ export const TRIBOS: Record<NucleoType, Tribo> = {
     ],
   },
   TECHNO: {
-    name: 'DREXAN',
-    genre: 'TECHNO / ELECTRO',
+    name: 'TECHNO',
     sub: 'A MÁQUINA HUMANA',
     emoji: '🎛️',
     color: '#D6336C',
@@ -62,8 +57,7 @@ export const TRIBOS: Record<NucleoType, Tribo> = {
     ],
   },
   FAROFEIRO: {
-    name: 'FLURAN',
-    genre: 'MÚLTIPLOS ESTILOS',
+    name: 'FAROFEIRO',
     sub: 'O ESPÍRITO LIVRE DA CENA',
     emoji: '🔥',
     color: '#E0730C',
@@ -74,8 +68,7 @@ export const TRIBOS: Record<NucleoType, Tribo> = {
     ],
   },
   MISTICO: {
-    name: 'AURAN',
-    genre: 'GOA / TRANCE / AMBIENT',
+    name: 'GOA / TRANCE',
     sub: 'O GUARDIÃO DAS ORIGENS',
     emoji: '🕉️',
     color: '#C98A00',
